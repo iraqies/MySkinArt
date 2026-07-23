@@ -1441,6 +1441,79 @@ button:disabled:hover {
   color: white;
 }
 
+/* ── Templates Filter Dropdown ────────────────────────── */
+
+.templates-filter-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.filter-dropdown {
+  position: relative;
+}
+
+.filter-dropdown-btn {
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 10px 28px;
+  font-family: var(--font);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  text-align: left;
+}
+
+.filter-dropdown-btn:hover {
+  border-color: var(--teal-700);
+  color: var(--text-secondary);
+}
+
+.filter-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 50;
+  min-width: 180px;
+  padding: 6px 0;
+}
+
+.filter-dropdown-menu.open {
+  display: block;
+}
+
+.filter-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.filter-check:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.filter-check input[type="checkbox"] {
+  accent-color: var(--teal-500);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
 /* ── Templates Section ─────────────────────────────────── */
 
 .templates-section {

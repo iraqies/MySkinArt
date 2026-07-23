@@ -13,7 +13,8 @@ let state = {
   uploadRunning: false,
   claiming: false,
   templates: [],
-  tileData: {}
+  tileData: {},
+  activeFilters: ['nature', 'flag', 'cape', 'anime']
 };
 
 const dom = {
@@ -84,6 +85,30 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Template Filter ──────────────────────────────────────────────
+
+const filterDropdownBtn = document.getElementById('filter-dropdown-btn');
+const filterDropdownMenu = document.getElementById('filter-dropdown-menu');
+const filterDropdown = document.getElementById('filter-dropdown');
+
+filterDropdownBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  filterDropdownMenu.classList.toggle('open');
+});
+
+document.addEventListener('click', (e) => {
+  if (!filterDropdown.contains(e.target)) {
+    filterDropdownMenu.classList.remove('open');
+  }
+});
+
+filterDropdownMenu.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    state.activeFilters = Array.from(filterDropdownMenu.querySelectorAll('input:checked')).map(c => c.value);
+    renderTemplates();
   });
 });
 
@@ -220,8 +245,15 @@ function renderTemplates() {
     dom.templatesGrid.innerHTML = '<p class="templates-empty">No templates available.</p>';
     return;
   }
+  const filtered = state.activeFilters.length === 0
+    ? state.templates
+    : state.templates.filter(t => state.activeFilters.includes(t.category));
+  if (!filtered.length) {
+    dom.templatesGrid.innerHTML = '<p class="templates-empty">No templates in this category.</p>';
+    return;
+  }
   dom.templatesGrid.innerHTML = '';
-  for (const t of state.templates) {
+  for (const t of filtered) {
     const card = document.createElement('div');
     card.className = 'template-card';
     const headUrl = t.uuid ? 'https://mc-heads.net/avatar/' + t.uuid + '/64?t=' + Date.now() : '';

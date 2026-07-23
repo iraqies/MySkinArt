@@ -2,11 +2,12 @@
   "templates": [
     {
       "id": "0000001",
-      "name": "Iraq Flag",
-      "filename": "images/iraq flag.png",
+      "name": "Iraq Only",
+      "filename": "images/iraq.png",
       "date": "2026-7-22",
       "uploader": "Iraqies",
-      "uuid": "39fa9ba1-4535-4c2c-8adf-8dfb1fba4d41"
+      "uuid": "39fa9ba1-4535-4c2c-8adf-8dfb1fba4d41",
+      "category": "flag"
     },
     {
       "id": "0000002",
@@ -14,7 +15,8 @@
       "filename": "images/MCE.png",
       "date": "2026-7-22",
       "uploader": "[Redacted] @skinart.zip",
-      "uuid": ""
+      "uuid": "",
+      "category": "cape"
     },
     {
       "id": "0000003",
@@ -22,7 +24,8 @@
       "filename": "images/mcc.png",
       "date": "2026-7-22",
       "uploader": "[Redacted] @skinart.zip",
-      "uuid": ""
+      "uuid": "",
+      "category": "cape"
     },
     {
       "id": "0000004",
@@ -30,7 +33,8 @@
       "filename": "images/purplesky.png",
       "date": "2026-7-22",
       "uploader": "Nouriko @skinart.zip",
-      "uuid": "2c61a784-d141-49c9-87ff-c03b458b12e3"
+      "uuid": "2c61a784-d141-49c9-87ff-c03b458b12e3",
+      "category": "nature"
     },
     {
       "id": "0000005",
@@ -38,7 +42,8 @@
       "filename": "images/dagger.png",
       "date": "2026-7-22",
       "uploader": "mir @skinart.zip",
-      "uuid": "fcd5fbfe-c86e-4e27-94a0-21bc09b12304"
+      "uuid": "fcd5fbfe-c86e-4e27-94a0-21bc09b12304",
+      "category": "other"
     },
     {
       "id": "0000006",
@@ -46,7 +51,8 @@
       "filename": "images/webhost.png",
       "date": "2026-7-22",
       "uploader": "182exe @skinart.zip",
-      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52",
+      "category": "other"
     },
     {
       "id": "0000007",
@@ -54,15 +60,17 @@
       "filename": "images/TROLL.png",
       "date": "2026-7-22",
       "uploader": "182exe @skinart.zip",
-      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
-    }, 
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52",
+      "category": "other"
+    },
     {
       "id": "0000008",
       "name": "Succumb",
       "filename": "images/Succumb.png",
       "date": "2026-7-22",
       "uploader": "182exe @skinart.zip",
-      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52",
+      "category": "other"
     },
     {
       "id": "0000009",
@@ -70,7 +78,8 @@
       "filename": "images/bipolar.png",
       "date": "2026-7-22",
       "uploader": "182exe @skinart.zip",
-      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52",
+      "category": "other"
     },
     {
       "id": "0000010",
@@ -78,7 +87,8 @@
       "filename": "images/holmes.png",
       "date": "2026-7-22",
       "uploader": "182exe @skinart.zip",
-      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52",
+      "category": "other"
     },
     {
       "id": "0000011",
@@ -86,7 +96,8 @@
       "filename": "images/starlight.png",
       "date": "2026-7-22",
       "uploader": "182exe @skinart.zip",
-      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52",
+      "category": "nature"
     },
     {
       "id": "0000012",
@@ -94,7 +105,8 @@
       "filename": "images/hamilton.png",
       "date": "2026-7-22",
       "uploader": "182exe @skinart.zip",
-      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52",
+      "category": "other"
     },
     {
       "id": "0000013",
@@ -102,7 +114,8 @@
       "filename": "images/190E.png",
       "date": "2026-7-22",
       "uploader": "182exe @skinart.zip",
-      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52",
+      "category": "other"
     },
     {
       "id": "0000014",
@@ -110,7 +123,8 @@
       "filename": "images/crystalpvp.png",
       "date": "2026-7-22",
       "uploader": "182exe @skinart.zip",
-      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52",
+      "category": "other"
     },
     {
       "id": "0000015",
@@ -118,7 +132,8 @@
       "filename": "images/cherry blossom.png",
       "date": "2026-7-22",
       "uploader": "AxolotlGuy7 @skinart.zip",
-      "uuid": "eef05b9d-78e7-438d-b676-7cb108955736"
+      "uuid": "eef05b9d-78e7-438d-b676-7cb108955736",
+      "category": "cape"
     },
     {
       "id": "0000016",
@@ -126,7 +141,8 @@
       "filename": "images/pokemada.png",
       "date": "2026-7-22",
       "uploader": "NATHANLEL @skinart.zip",
-      "uuid": "4655a773-e9fb-4fc7-b32d-c58e1494f38d"
+      "uuid": "4655a773-e9fb-4fc7-b32d-c58e1494f38d",
+      "category": "anime"
     },
     {
       "id": "0000017",
@@ -134,7 +150,8 @@
       "filename": "images/ScoobyDoo.png",
       "date": "2026-7-22",
       "uploader": "Zubook @skinart.zip",
-      "uuid": "8cbbb4ee-c155-4600-a0d1-b3c1cd499c35"
+      "uuid": "8cbbb4ee-c155-4600-a0d1-b3c1cd499c35",
+      "category": "other"
     },
     {
       "id": "0000018",
@@ -142,7 +159,8 @@
       "filename": "images/silentvoice.png",
       "date": "2026-7-22",
       "uploader": "182exe @skinart.zip",
-      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52",
+      "category": "other"
     },
     {
       "id": "0000019",
@@ -150,7 +168,8 @@
       "filename": "images/UFO.png",
       "date": "2026-7-23",
       "uploader": "Alien @skinart.zip",
-      "uuid": "2f8f202d-e80d-4deb-9b30-0b997d322002"
+      "uuid": "2f8f202d-e80d-4deb-9b30-0b997d322002",
+      "category": "other"
     },
     {
       "id": "0000020",
@@ -158,7 +177,8 @@
       "filename": "images/wannacry.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "other"
     },
     {
       "id": "0000021",
@@ -166,7 +186,8 @@
       "filename": "images/chopped.png",
       "date": "2026-7-23",
       "uploader": "ProblematicPatagon @skinart.zip",
-      "uuid": "1d2d7608-8984-46e8-a461-8912eed19d30"
+      "uuid": "1d2d7608-8984-46e8-a461-8912eed19d30",
+      "category": "other"
     },
     {
       "id": "0000022",
@@ -174,7 +195,8 @@
       "filename": "images/sunset.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "nature"
     },
     {
       "id": "0000023",
@@ -182,7 +204,8 @@
       "filename": "images/obito.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "anime"
     },
     {
       "id": "0000024",
@@ -190,7 +213,8 @@
       "filename": "images/pikachu.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "anime"
     },
     {
       "id": "0000025",
@@ -198,7 +222,8 @@
       "filename": "images/luffy.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "anime"
     },
     {
       "id": "0000026",
@@ -206,7 +231,8 @@
       "filename": "images/skull.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "other"
     },
     {
       "id": "0000027",
@@ -214,7 +240,8 @@
       "filename": "images/thug.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "other"
     },
     {
       "id": "0000028",
@@ -222,7 +249,8 @@
       "filename": "images/pinkclouds.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "nature"
     },
     {
       "id": "0000029",
@@ -230,15 +258,17 @@
       "filename": "images/snowpeakvista.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
-    }, 
+      "uuid": "",
+      "category": "nature"
+    },
     {
       "id": "0000030",
       "name": "Blue Sports Car",
       "filename": "images/sports_car.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "other"
     },
     {
       "id": "0000031",
@@ -246,7 +276,8 @@
       "filename": "images/moonlit.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "nature"
     },
     {
       "id": "0000032",
@@ -254,7 +285,8 @@
       "filename": "images/sonozaki.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "other"
     },
     {
       "id": "0000033",
@@ -262,7 +294,8 @@
       "filename": "images/lilies.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "nature"
     },
     {
       "id": "0000034",
@@ -270,7 +303,8 @@
       "filename": "images/BMO.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "other"
     },
     {
       "id": "0000035",
@@ -278,7 +312,8 @@
       "filename": "images/nebula.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "other"
     },
     {
       "id": "0000036",
@@ -286,7 +321,8 @@
       "filename": "images/palestine.png",
       "date": "2026-7-23",
       "uploader": "",
-      "uuid": ""
+      "uuid": "",
+      "category": "flag"
     }
   ]
 }
