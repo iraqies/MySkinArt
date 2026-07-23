@@ -14,7 +14,9 @@ let state = {
   claiming: false,
   templates: [],
   tileData: {},
-  activeFilter: 'all'
+  activeFilter: 'all',
+  skinModel: null,
+  originalSkinSource: null
 };
 
 const dom = {
@@ -148,6 +150,8 @@ dom.originalZone.querySelector('#select-original').addEventListener('click', asy
   const p = await window.electronAPI.selectOriginalSkin();
   if (p) {
     setOriginalSkin(p, p.split('\\').pop());
+    state.originalSkinSource = 'manual';
+    state.skinModel = await askSkinModel();
   } else {
     clearOriginalSkin();
   }
@@ -443,17 +447,25 @@ async function autoDetectOriginalSkin() {
         filename: 'myskinart_original_' + Date.now() + '.png'
       });
       state.originalSkinPath = tmpPath;
+      state.originalSkinSource = 'auto';
       dom.originalName.textContent = state.ign + ' (current skin) -> #27';
       dom.originalZone.classList.add('has-file');
       const img = new Image();
       img.src = 'data:image/png;base64,' + result.data;
       img.onload = () => {
         const c = document.createElement('canvas');
-        c.width = 8; c.height = 8;
+        c.width = 64; c.height = 64;
         const ctx = c.getContext('2d');
         ctx.imageSmoothingEnabled = false;
-        ctx.drawImage(img, 8, 8, 8, 8, 0, 0, 8, 8);
-        state.originalSkinHead = c.toDataURL();
+        ctx.drawImage(img, 0, 0, 64, 64);
+        const armPixel = ctx.getImageData(47, 20, 1, 1).data;
+        state.skinModel = (armPixel[3] === 0) ? 'slim' : 'classic';
+        const c8 = document.createElement('canvas');
+        c8.width = 8; c8.height = 8;
+        const c8Ctx = c8.getContext('2d');
+        c8Ctx.imageSmoothingEnabled = false;
+        c8Ctx.drawImage(img, 8, 8, 8, 8, 0, 0, 8, 8);
+        state.originalSkinHead = c8.toDataURL();
         updateCell27();
         updatePreviewCell27();
       };
@@ -724,8 +736,7 @@ async function runUpload(startNum) {
   }
   if (state.originalSkinPath) {
     highlightGridCell(27);
-    const variant = await askSkinModel();
-    const result = await uploadWithRetry({ path: state.originalSkinPath, num: 27, variant });
+    const result = await uploadWithRetry({ path: state.originalSkinPath, num: 27, variant: state.skinModel });
     if (!result.success) {
       updateUploadCell(27, 'error');
       logEntry('err', 'Skin 27 (original): ' + result.error);
@@ -1087,7 +1098,7 @@ dom.btnRestart.addEventListener('click', async () => {
     inputPath: null, baseSkinPath: null, originalSkinPath: null, originalSkinHead: null,
     lastTileDataUrl: null, skins: [], bearerToken: savedBearer, refreshToken: savedRefresh,
     ign: savedIgn, uuid: savedUuid, pollTimer: null, uploadRunning: false, claiming: false,
-    templates: state.templates, tileData: {}
+    templates: state.templates, tileData: {}, activeFilter: 'all', skinModel: null, originalSkinSource: null
   };
   dom.inputName.textContent = 'No image selected';
   dom.inputZone.classList.remove('has-file');
