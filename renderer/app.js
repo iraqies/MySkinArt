@@ -821,7 +821,7 @@ async function waitForNextSkin(num, skinPath) {
 
     setTimeout(async () => {
       const tileDataUrl = state.tileData[num];
-      const nmRetryMax = 4;
+      const nmRetryMax = 10;
       const nmRetryInterval = 5000;
 
       for (let nmAttempt = 1; nmAttempt <= nmRetryMax; nmAttempt++) {
