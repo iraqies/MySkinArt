@@ -121,6 +121,12 @@ body::before {
   border-bottom: 1px solid var(--border-subtle);
 }
 
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .logo-img {
   height: 32px;
   width: 32px;
