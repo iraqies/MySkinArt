@@ -14,7 +14,7 @@ let state = {
   claiming: false,
   templates: [],
   tileData: {},
-  activeFilters: ['nature', 'flag', 'cape', 'anime']
+  activeFilter: 'all'
 };
 
 const dom = {
@@ -95,27 +95,22 @@ const filterTags = document.getElementById('filter-tags');
 
 function updateFilterTags() {
   const allCats = ['nature', 'flag', 'cape', 'anime'];
-  const allActive = allCats.every(c => state.activeFilters.includes(c));
+  const allActive = state.activeFilter === 'all';
   filterAllBtn.classList.toggle('active', allActive);
   filterTags.querySelectorAll('.filter-tag').forEach(tag => {
-    tag.classList.toggle('active', state.activeFilters.includes(tag.dataset.filter));
+    tag.classList.toggle('active', state.activeFilter === tag.dataset.filter);
   });
 }
 
 filterAllBtn.addEventListener('click', () => {
-  state.activeFilters = ['nature', 'flag', 'cape', 'anime'];
+  state.activeFilter = 'all';
   updateFilterTags();
   renderTemplates();
 });
 
 filterTags.querySelectorAll('.filter-tag').forEach(tag => {
   tag.addEventListener('click', () => {
-    const cat = tag.dataset.filter;
-    if (state.activeFilters.includes(cat)) {
-      state.activeFilters = state.activeFilters.filter(c => c !== cat);
-    } else {
-      state.activeFilters.push(cat);
-    }
+    state.activeFilter = tag.dataset.filter;
     updateFilterTags();
     renderTemplates();
   });
@@ -256,9 +251,9 @@ function renderTemplates() {
     dom.templatesGrid.innerHTML = '<p class="templates-empty">No templates available.</p>';
     return;
   }
-  const filtered = state.activeFilters.length === 0
+  const filtered = state.activeFilter === 'all'
     ? state.templates
-    : state.templates.filter(t => state.activeFilters.includes(t.category));
+    : state.templates.filter(t => t.category === state.activeFilter);
   if (!filtered.length) {
     dom.templatesGrid.innerHTML = '<p class="templates-empty">No templates in this category.</p>';
     return;
