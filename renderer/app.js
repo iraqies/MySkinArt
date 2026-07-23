@@ -90,27 +90,38 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // ── Template Filter ──────────────────────────────────────────────
 
-const filterDropdownBtn = document.getElementById('filter-dropdown-btn');
-const filterDropdownMenu = document.getElementById('filter-dropdown-menu');
-const filterDropdown = document.getElementById('filter-dropdown');
+const filterAllBtn = document.getElementById('filter-all');
+const filterTags = document.getElementById('filter-tags');
 
-filterDropdownBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  filterDropdownMenu.classList.toggle('open');
+function updateFilterTags() {
+  const allCats = ['nature', 'flag', 'cape', 'anime'];
+  const allActive = allCats.every(c => state.activeFilters.includes(c));
+  filterAllBtn.classList.toggle('active', allActive);
+  filterTags.querySelectorAll('.filter-tag').forEach(tag => {
+    tag.classList.toggle('active', state.activeFilters.includes(tag.dataset.filter));
+  });
+}
+
+filterAllBtn.addEventListener('click', () => {
+  state.activeFilters = ['nature', 'flag', 'cape', 'anime'];
+  updateFilterTags();
+  renderTemplates();
 });
 
-document.addEventListener('click', (e) => {
-  if (!filterDropdown.contains(e.target)) {
-    filterDropdownMenu.classList.remove('open');
-  }
-});
-
-filterDropdownMenu.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-  cb.addEventListener('change', () => {
-    state.activeFilters = Array.from(filterDropdownMenu.querySelectorAll('input:checked')).map(c => c.value);
+filterTags.querySelectorAll('.filter-tag').forEach(tag => {
+  tag.addEventListener('click', () => {
+    const cat = tag.dataset.filter;
+    if (state.activeFilters.includes(cat)) {
+      state.activeFilters = state.activeFilters.filter(c => c !== cat);
+    } else {
+      state.activeFilters.push(cat);
+    }
+    updateFilterTags();
     renderTemplates();
   });
 });
+
+updateFilterTags();
 
 // ── File Selection ───────────────────────────────────────────────
 

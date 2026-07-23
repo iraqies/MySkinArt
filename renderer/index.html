@@ -116,14 +116,12 @@
 
   <div id="tab-templates" class="tab-content">
     <div class="templates-filter-bar">
-      <div class="filter-dropdown" id="filter-dropdown">
-        <button class="filter-dropdown-btn" id="filter-dropdown-btn">Filter</button>
-        <div class="filter-dropdown-menu" id="filter-dropdown-menu">
-          <label class="filter-check"><input type="checkbox" value="nature" checked> Nature</label>
-          <label class="filter-check"><input type="checkbox" value="flag" checked> Flag</label>
-          <label class="filter-check"><input type="checkbox" value="cape" checked> Cape</label>
-          <label class="filter-check"><input type="checkbox" value="anime" checked> Anime</label>
-        </div>
+      <button class="filter-btn filter-all active" id="filter-all">All</button>
+      <div class="filter-tags" id="filter-tags">
+        <button class="filter-tag" data-filter="nature">Nature</button>
+        <button class="filter-tag" data-filter="flag">Flag</button>
+        <button class="filter-tag" data-filter="cape">Cape</button>
+        <button class="filter-tag" data-filter="anime">Anime</button>
       </div>
     </div>
     <div class="templates-section">
