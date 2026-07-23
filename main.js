@@ -97,7 +97,7 @@ async function syncRemoteTemplates() {
 function createWindow() {
   Menu.setApplicationMenu(null);
   mainWindow = new BrowserWindow({
-    width: 1500,
+    width: 1050,
     height: 820,
     minWidth: 800,
     minHeight: 600,
