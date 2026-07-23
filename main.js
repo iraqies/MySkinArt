@@ -226,10 +226,24 @@ ipcMain.handle('download-head', async (event, { uuid }) => {
 
 ipcMain.handle('fetch-avatar', async (event, { id }) => {
   try {
-    const buf = await downloadFile('https://mc-heads.net/avatar/' + encodeURIComponent(id) + '/64?t=' + Date.now());
-    return { success: true, dataUrl: 'data:image/png;base64,' + buf.toString('base64') };
+    const profileData = await httpsGet('sessionserver.mojang.com', '/session/minecraft/profile/' + id);
+    const profile = JSON.parse(profileData);
+    const textureProp = profile.properties.find(p => p.name === 'textures');
+    if (!textureProp) throw new Error('No textures');
+    const decoded = JSON.parse(Buffer.from(textureProp.value, 'base64').toString('utf8'));
+    const skinUrl = decoded.textures.SKIN ? decoded.textures.SKIN.url : null;
+    if (!skinUrl) throw new Error('No skin URL');
+    const skinBuf = await downloadFile(skinUrl);
+    const headBuf = await sharp(skinBuf).extract({ left: 8, top: 8, width: 8, height: 8 })
+      .resize(64, 64, { kernel: sharp.kernel.nearest }).png().toBuffer();
+    return { success: true, dataUrl: 'data:image/png;base64,' + headBuf.toString('base64') };
   } catch (e) {
-    return { success: false, dataUrl: '' };
+    try {
+      const buf = await downloadFile('https://mc-heads.net/avatar/' + encodeURIComponent(id) + '/64');
+      return { success: true, dataUrl: 'data:image/png;base64,' + buf.toString('base64') };
+    } catch (e2) {
+      return { success: false, dataUrl: '' };
+    }
   }
 });
 
