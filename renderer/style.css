@@ -150,7 +150,7 @@ body::before {
   padding: 10px 22px;
   font-family: var(--font);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: normal;
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
@@ -188,7 +188,7 @@ body::before {
 
 .account-name {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: normal;
   color: var(--text);
 }
 
@@ -287,7 +287,7 @@ body::before {
 .token-help summary {
   cursor: pointer;
   color: var(--teal-400);
-  font-weight: 500;
+  font-weight: normal;
   padding: 6px 0;
   transition: color 0.2s ease;
 }
@@ -341,7 +341,7 @@ body::before {
 .dc-instruction a {
   color: var(--teal-400);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: normal;
 }
 
 .dc-instruction a:hover {
@@ -421,7 +421,7 @@ body::before {
 .saved-name {
   flex: 1;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: normal;
   color: var(--text);
 }
 
@@ -433,7 +433,7 @@ body::before {
   padding: 6px 14px;
   font-family: var(--font);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: normal;
   letter-spacing: 0.3px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -512,7 +512,7 @@ body::before {
 
 .dd-name {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: normal;
   color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -563,7 +563,7 @@ body::before {
 
 .dropdown-item.accent {
   color: var(--teal-400);
-  font-weight: 500;
+  font-weight: normal;
 }
 
 .dropdown-item.accent:hover {
@@ -631,7 +631,7 @@ body::before {
   text-decoration: none;
   word-break: break-all;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: normal;
 }
 
 #dd-claim-link:hover {
@@ -642,7 +642,7 @@ body::before {
 /* ── App Container ──────────────────────────────────────── */
 
 .app {
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 28px 40px 80px;
   position: relative;
@@ -788,7 +788,7 @@ h3 {
 
 .upload-zone span {
   display: block;
-  font-weight: 600;
+  font-weight: normal;
   font-size: 17px;
   margin-bottom: 6px;
   color: var(--text);
@@ -810,7 +810,7 @@ h3 {
   cursor: pointer;
   font-family: var(--font);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: normal;
   letter-spacing: 0.4px;
   transition: all 0.2s ease;
 }
@@ -834,10 +834,10 @@ h3 {
 
 .upload-zone.has-file small {
   color: var(--teal-400);
-  font-weight: 500;
+  font-weight: normal;
 }
 
-.upload-zone.secondary span { font-size: 15px; font-weight: 500; }
+.upload-zone.secondary span { font-size: 15px; font-weight: normal; }
 .upload-zone.secondary small { font-size: 12px; margin-bottom: 14px; }
 
 /* ── Original Skin Options ─────────────────────────────── */
@@ -895,7 +895,7 @@ h3 {
   bottom: 2px;
   right: 4px;
   font-size: 9px;
-  font-weight: 600;
+  font-weight: normal;
   font-family: var(--font);
   color: #fff;
   text-shadow: 0 1px 3px rgba(0,0,0,0.8);
@@ -915,7 +915,7 @@ button {
   border-radius: var(--radius);
   padding: 14px 32px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: normal;
   font-size: 15px;
   font-family: var(--font);
   letter-spacing: 0.4px;
@@ -949,7 +949,7 @@ button:disabled:hover {
   margin: 24px auto;
   padding: 16px 48px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: normal;
   background: linear-gradient(135deg, var(--teal-600), var(--teal-500));
   color: white;
   border: none;
@@ -974,7 +974,7 @@ button:disabled:hover {
   margin: 20px auto;
   padding: 16px 48px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: normal;
   background: linear-gradient(135deg, var(--teal-600), var(--teal-500));
   color: white;
   border: none;
@@ -1002,7 +1002,7 @@ button:disabled:hover {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: normal;
   padding: 10px 24px;
 }
 
@@ -1064,7 +1064,7 @@ button:disabled:hover {
   align-items: center;
   justify-content: center;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: normal;
   font-family: var(--font);
   color: var(--text-muted);
   overflow: hidden;
@@ -1157,7 +1157,7 @@ button:disabled:hover {
   margin-bottom: 8px;
   color: var(--text);
   font-size: 17px;
-  font-weight: 500;
+  font-weight: normal;
 }
 
 .confirm-area .hint {
@@ -1280,7 +1280,7 @@ button:disabled:hover {
   color: var(--teal-400);
   font-family: var(--font);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: normal;
   letter-spacing: 0.3px;
   word-break: break-all;
   text-decoration: none;
@@ -1333,7 +1333,7 @@ button:disabled:hover {
 .input-group label {
   display: block;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: normal;
   color: var(--text-muted);
   margin-bottom: 6px;
 }
@@ -1449,7 +1449,7 @@ button:disabled:hover {
 
 .templates-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 16px;
 }
 
@@ -1525,7 +1525,7 @@ button:disabled:hover {
 }
 
 .template-card-name {
-  font-weight: 600;
+  font-weight: normal;
   font-size: 15px;
   color: var(--text);
   line-height: 1.4;

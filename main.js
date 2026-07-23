@@ -57,9 +57,18 @@ function syncBundledTemplates() {
         try { fs.copyFileSync(src, dest); } catch {}
       }
     }
-    if (!fs.existsSync(TEMPLATES_CACHE)) {
-      fs.writeFileSync(TEMPLATES_CACHE, JSON.stringify(bundled, null, 2), 'utf8');
+    let existing = { templates: [] };
+    try { existing = JSON.parse(fs.readFileSync(TEMPLATES_CACHE, 'utf8')); } catch {}
+    const existingIds = new Set((existing.templates || []).map(t => t.id));
+    const merged = [...(existing.templates || [])];
+    for (const t of bundledTemplates) {
+      if (!existingIds.has(t.id)) merged.push(t);
+      else {
+        const idx = merged.findIndex(m => m.id === t.id);
+        if (idx >= 0) merged[idx] = { ...merged[idx], ...t };
+      }
     }
+    fs.writeFileSync(TEMPLATES_CACHE, JSON.stringify({ templates: merged }, null, 2), 'utf8');
   } catch {}
 }
 
@@ -88,7 +97,7 @@ async function syncRemoteTemplates() {
 function createWindow() {
   Menu.setApplicationMenu(null);
   mainWindow = new BrowserWindow({
-    width: 1050,
+    width: 1250,
     height: 820,
     minWidth: 800,
     minHeight: 600,
