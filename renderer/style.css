@@ -153,6 +153,7 @@ body::before {
   font-weight: normal;
   letter-spacing: 0.5px;
   cursor: pointer;
+  transition: none;
 }
 
 .btn-signin:hover {

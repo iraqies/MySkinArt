@@ -57,18 +57,7 @@ function syncBundledTemplates() {
         try { fs.copyFileSync(src, dest); } catch {}
       }
     }
-    let existing = { templates: [] };
-    try { existing = JSON.parse(fs.readFileSync(TEMPLATES_CACHE, 'utf8')); } catch {}
-    const existingIds = new Set((existing.templates || []).map(t => t.id));
-    const merged = [...(existing.templates || [])];
-    for (const t of bundledTemplates) {
-      if (!existingIds.has(t.id)) merged.push(t);
-      else {
-        const idx = merged.findIndex(m => m.id === t.id);
-        if (idx >= 0) merged[idx] = { ...merged[idx], ...t };
-      }
-    }
-    fs.writeFileSync(TEMPLATES_CACHE, JSON.stringify({ templates: merged }, null, 2), 'utf8');
+    fs.writeFileSync(TEMPLATES_CACHE, JSON.stringify(bundled, null, 2), 'utf8');
   } catch {}
 }
 
