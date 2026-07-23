@@ -202,8 +202,8 @@
     },
     {
       "id": "0000026",
-      "name": "Sonic the Hedgehog",
-      "filename": "images/sonic.png",
+      "name": "Skull",
+      "filename": "images/skull.png",
       "date": "2026-7-23",
       "uploader": "",
       "uuid": ""
@@ -266,8 +266,8 @@
     },
     {
       "id": "0000034",
-      "name": "Sunset Over the Ocean",
-      "filename": "images/sunset_ocean.png",
+      "name": "BMO",
+      "filename": "images/BMO.png",
       "date": "2026-7-23",
       "uploader": "",
       "uuid": ""
@@ -284,22 +284,6 @@
       "id": "0000036",
       "name": "Free Palestine!",
       "filename": "images/palestine.png",
-      "date": "2026-7-23",
-      "uploader": "",
-      "uuid": ""
-    },
-    {
-      "id": "0000037",
-      "name": "BMO",
-      "filename": "images/BMO.png",
-      "date": "2026-7-23",
-      "uploader": "",
-      "uuid": ""
-    },
-    {
-      "id": "0000038",
-      "name": "Skull",
-      "filename": "images/skull.png",
       "date": "2026-7-23",
       "uploader": "",
       "uuid": ""
