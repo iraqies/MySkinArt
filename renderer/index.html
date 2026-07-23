@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MySkinArt</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <h1 class="logo">MySkinArt</h1>
+  </div>
+  <div class="topbar-right">
+    <div id="account-area" class="account-area">
+      <button id="btn-signin" class="btn-signin">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<div id="signin-modal" class="modal" style="display:none">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Sign in with Microsoft</h2>
+      <button id="btn-close-modal" class="btn-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <details class="token-help">
+        <summary>How does this work?</summary>
+        <ol>
+          <li>Click <strong>Start Sign In</strong> below</li>
+          <li>A code and URL will appear</li>
+          <li>Open the URL in any browser, enter the code, and sign in</li>
+          <li>The app detects the login automatically</li>
+        </ol>
+      </details>
+      <div class="auth-section">
+        <button id="btn-auth-start">Start Sign In</button>
+        <div id="device-code-area" style="display:none">
+          <p class="dc-instruction">Go to <a id="dc-uri" href="#" target="_blank"></a> and enter code:</p>
+          <div class="dc-code" id="dc-code"></div>
+          <div class="dc-spinner" id="dc-spinner"><div class="spinner"></div></div>
+          <p id="dc-status">Waiting for you to sign in...</p>
+        </div>
+      </div>
+      <div class="saved-accounts-section" id="saved-accounts-section" style="display:none">
+        <h3>Saved Accounts</h3>
+        <div id="saved-accounts-list" class="saved-accounts-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="account-dropdown" class="dropdown" style="display:none">
+  <div class="dropdown-header">
+    <img id="dd-head" class="dd-head" src="" alt="">
+    <div class="dd-info">
+      <span id="dd-name" class="dd-name"></span>
+      <span id="dd-uuid" class="dd-uuid"></span>
+    </div>
+  </div>
+  <div class="dropdown-divider"></div>
+  <button id="dd-namemc" class="dropdown-item">Open NameMC Profile</button>
+  <button id="dd-claim" class="dropdown-item">Claim on NameMC</button>
+  <div id="dd-claim-area" style="display:none" class="dd-claim-area">
+    <div class="server-inputs">
+      <input type="text" id="dd-server-host" placeholder="Server address" value="blockmania.com">
+      <input type="number" id="dd-server-port" placeholder="Port" value="25565">
+    </div>
+    <button id="dd-claim-go" class="dropdown-item accent">Connect & Claim</button>
+    <div id="dd-claim-result" style="display:none">
+      <p id="dd-claim-status"></p>
+      <a id="dd-claim-link" href="#" target="_blank" style="display:none"></a>
+    </div>
+  </div>
+  <div class="dropdown-divider"></div>
+  <button id="dd-switch" class="dropdown-item">Switch Account</button>
+  <button id="dd-logout" class="dropdown-item danger">Sign Out</button>
+</div>
+
+<div class="app" id="app">
+  <div class="tab-buttons">
+    <button class="tab-btn active" data-tab="create">Create</button>
+    <button class="tab-btn" data-tab="templates">Templates</button>
+  </div>
+
+  <div id="tab-create" class="tab-content active">
+    <div class="upload-zone" id="input-zone">
+      <div class="upload-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+      </div>
+      <span>72x24 Skin Art</span>
+      <small id="input-name">No image selected</small>
+      <input type="button" id="select-input" value="Select Image">
+    </div>
+    <div class="upload-zone secondary" id="base-zone">
+      <span>64x64 Base Skin (optional)</span>
+      <small id="base-name">None</small>
+      <input type="button" id="select-base" value="Select Base">
+    </div>
+    <div class="upload-zone secondary" id="original-zone">
+      <span>Your Original Skin (slot #27)</span>
+      <small id="original-name">Defaults to last tile from art</small>
+      <div class="original-options">
+        <input type="button" id="select-original" value="Select File">
+      </div>
+    </div>
+    <div class="preview-wrapper" id="preview-wrapper" style="display:none"></div>
+    <div class="actions">
+      <button id="btn-generate" disabled>Generate Skins</button>
+    </div>
+  </div>
+
+  <div id="tab-templates" class="tab-content">
+    <div class="templates-section">
+      <div class="templates-grid" id="templates-grid">
+        <p class="templates-empty">No templates available.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="step-upload" class="step">
+    <div class="upload-actions">
+      <button id="btn-start-upload">Start Upload</button>
+      <button id="btn-export" disabled>Export Skins Only</button>
+    </div>
+    <div class="upload-grid" id="upload-grid"></div>
+    <div class="confirm-area" id="confirm-area" style="display:none">
+      <img id="confirm-head" class="confirm-head" src="" alt="">
+      <p>Skin <span id="confirm-num"></span> uploaded!</p>
+      <p class="hint">Open NameMC to cache it, or claim your profile from the top-right menu.</p>
+      <div class="confirm-btns">
+        <button id="btn-next-skin">Next Skin</button>
+      </div>
+    </div>
+    <div id="upload-log"></div>
+  </div>
+
+  <div id="step-done" class="step">
+    <div class="done-icon">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="16 8 10.5 14 8 11.5"/></svg>
+    </div>
+    <h2>All done!</h2>
+    <p>All skins have been uploaded and confirmed.</p>
+    <button id="btn-restart">Make another</button>
+  </div>
+</div>
+
+<div id="claim-modal" class="modal" style="display:none">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Claim on NameMC</h2>
+      <button id="btn-close-claim-modal" class="btn-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="server-inputs">
+        <div class="input-group">
+          <label>Server Address</label>
+          <input type="text" id="claim-server-host" placeholder="blockmania.com" value="blockmania.com">
+        </div>
+        <div class="input-group small">
+          <label>Port</label>
+          <input type="number" id="claim-server-port" placeholder="25565" value="25565">
+        </div>
+      </div>
+      <button id="btn-claim-go" class="btn-primary" style="margin-top:16px">Connect & Claim</button>
+      <div id="claim-result-area" style="display:none">
+        <div class="claim-spinner" id="claim-spinner"><div class="spinner"></div></div>
+        <p id="claim-status"></p>
+        <a id="claim-link" href="#" target="_blank" style="display:none"></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

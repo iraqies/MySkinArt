@@ -1,0 +1,148 @@
+{
+  "templates": [
+    {
+      "id": "0000001",
+      "name": "Iraq Flag",
+      "filename": "images/iraq flag.png",
+      "date": "2026-7-22",
+      "uploader": "Iraqies",
+      "uuid": "39fa9ba1-4535-4c2c-8adf-8dfb1fba4d41"
+    },
+    {
+      "id": "0000002",
+      "name": "Minecraft Experience",
+      "filename": "images/MCE.png",
+      "date": "2026-7-22",
+      "uploader": "[Redacted] @skinart.zip",
+      "uuid": ""
+    },
+    {
+      "id": "0000003",
+      "name": "Minecraft Championships",
+      "filename": "images/mcc.png",
+      "date": "2026-7-22",
+      "uploader": "[Redacted] @skinart.zip",
+      "uuid": ""
+    },
+    {
+      "id": "0000004",
+      "name": "Purple Sky",
+      "filename": "images/purplesky.png",
+      "date": "2026-7-22",
+      "uploader": "Nouriko @skinart.zip",
+      "uuid": "2c61a784-d141-49c9-87ff-c03b458b12e3"
+    },
+    {
+      "id": "0000005",
+      "name": "Dagger",
+      "filename": "images/dagger.png",
+      "date": "2026-7-22",
+      "uploader": "mir @skinart.zip",
+      "uuid": "fcd5fbfe-c86e-4e27-94a0-21bc09b12304"
+    },
+    {
+      "id": "0000006",
+      "name": "WEBHOST",
+      "filename": "images/webhost.png",
+      "date": "2026-7-22",
+      "uploader": "182exe @skinart.zip",
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+    },
+    {
+      "id": "0000007",
+      "name": "TROL",
+      "filename": "images/TROLL.png",
+      "date": "2026-7-22",
+      "uploader": "182exe @skinart.zip",
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+    }, 
+    {
+      "id": "0000008",
+      "name": "Succumb",
+      "filename": "images/Succumb.png",
+      "date": "2026-7-22",
+      "uploader": "182exe @skinart.zip",
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+    },
+    {
+      "id": "0000009",
+      "name": "Bipolar",
+      "filename": "images/bipolar.png",
+      "date": "2026-7-22",
+      "uploader": "182exe @skinart.zip",
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+    },
+    {
+      "id": "0000010",
+      "name": "Holmes",
+      "filename": "images/holmes.png",
+      "date": "2026-7-22",
+      "uploader": "182exe @skinart.zip",
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+    },
+    {
+      "id": "0000011",
+      "name": "Starlight",
+      "filename": "images/starlight.png",
+      "date": "2026-7-22",
+      "uploader": "182exe @skinart.zip",
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+    },
+    {
+      "id": "0000012",
+      "name": "Hamilton",
+      "filename": "images/hamilton.png",
+      "date": "2026-7-22",
+      "uploader": "182exe @skinart.zip",
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+    },
+    {
+      "id": "0000013",
+      "name": "190E",
+      "filename": "images/190E.png",
+      "date": "2026-7-22",
+      "uploader": "182exe @skinart.zip",
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+    },
+    {
+      "id": "0000014",
+      "name": "Crystal PVP",
+      "filename": "images/crystalpvp.png",
+      "date": "2026-7-22",
+      "uploader": "182exe @skinart.zip",
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+    },
+    {
+      "id": "0000015",
+      "name": "Chery Blossom",
+      "filename": "images/cherry blossom.png",
+      "date": "2026-7-22",
+      "uploader": "AxolotlGuy7 @skinart.zip",
+      "uuid": "eef05b9d-78e7-438d-b676-7cb108955736"
+    },
+    {
+      "id": "0000016",
+      "name": "Pokemada",
+      "filename": "images/pokemada.png",
+      "date": "2026-7-22",
+      "uploader": "NATHANLEL @skinart.zip",
+      "uuid": "4655a773-e9fb-4fc7-b32d-c58e1494f38d"
+    },
+    {
+      "id": "0000017",
+      "name": "Scooby Doo!",
+      "filename": "images/ScoobyDoo.png",
+      "date": "2026-7-22",
+      "uploader": "Zubook @skinart.zip",
+      "uuid": "8cbbb4ee-c155-4600-a0d1-b3c1cd499c35"
+    },
+    {
+      "id": "0000018",
+      "name": "A Silent Voice",
+      "filename": "images/silentvoice.png",
+      "date": "2026-7-22",
+      "uploader": "182exe @skinart.zip",
+      "uuid": "c26a09c4-341d-4ed2-a789-270ced42da52"
+    }
+  ]
+}
