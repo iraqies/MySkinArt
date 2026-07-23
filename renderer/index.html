@@ -4,12 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MySkinArt</title>
+<link rel="icon" type="image/png" href="../lib/logo.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="topbar">
   <div class="topbar-left">
+    <img class="logo-img" src="../lib/logo_nobg.png" alt="MySkinArt">
     <h1 class="logo">MySkinArt</h1>
   </div>
   <div class="topbar-right">
@@ -129,9 +131,14 @@
     <div class="confirm-area" id="confirm-area" style="display:none">
       <img id="confirm-head" class="confirm-head" src="" alt="">
       <p>Skin <span id="confirm-num"></span> uploaded!</p>
-      <p class="hint">Open NameMC to cache it, or claim your profile from the top-right menu.</p>
+      <div id="poll-status" class="poll-status">
+        <div class="poll-spinner"></div>
+        <span id="poll-text">Checking NameMC...</span>
+      </div>
+      <p class="hint">Waiting for skin to appear on session server.</p>
       <div class="confirm-btns">
-        <button id="btn-next-skin">Next Skin</button>
+        <button id="btn-next-skin" style="display:none">Next Skin</button>
+        <button id="btn-skip-wait" class="btn-skip">Skip Wait</button>
       </div>
     </div>
     <div id="upload-log"></div>
@@ -169,6 +176,21 @@
         <div class="claim-spinner" id="claim-spinner"><div class="spinner"></div></div>
         <p id="claim-status"></p>
         <a id="claim-link" href="#" target="_blank" style="display:none"></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="model-modal" class="modal" style="display:none">
+  <div class="modal-content" style="width:400px">
+    <div class="modal-header">
+      <h2>Skin Model</h2>
+    </div>
+    <div class="modal-body" style="text-align:center">
+      <p style="margin:0 0 20px;color:var(--text-muted)">Do you want your original skin (final slot) to use the <b>Slim</b> (Alex) or <b>Wide</b> (Steve) arm model?</p>
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button id="btn-model-slim" class="btn-primary" style="flex:1">Slim (Alex)</button>
+        <button id="btn-model-wide" class="btn-primary" style="flex:1">Wide (Steve)</button>
       </div>
     </div>
   </div>

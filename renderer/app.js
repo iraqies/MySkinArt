@@ -35,6 +35,9 @@ const dom = {
   confirmNum: document.getElementById('confirm-num'),
   confirmHead: document.getElementById('confirm-head'),
   btnNextSkin: document.getElementById('btn-next-skin'),
+  btnSkipWait: document.getElementById('btn-skip-wait'),
+  pollStatus: document.getElementById('poll-status'),
+  pollText: document.getElementById('poll-text'),
   btnRestart: document.getElementById('btn-restart'),
   templatesGrid: document.getElementById('templates-grid'),
   accountArea: document.getElementById('account-area'),
@@ -159,6 +162,9 @@ function updatePreviewCell27() {
   } else if (state.lastTileDataUrl && img) {
     img.src = state.lastTileDataUrl;
     if (label) { label.textContent = '27'; label.className = 'pl'; }
+  } else if (state.tileData && state.tileData[27] && img) {
+    img.src = state.tileData[27];
+    if (label) { label.textContent = '27'; label.className = 'pl'; }
   } else if (img) {
     img.src = '';
     if (label) { label.textContent = ''; label.className = 'pl'; }
@@ -227,11 +233,9 @@ function renderTemplates() {
           '<div class="template-card-name">' + escHtml(t.name) + '</div>' +
           (t.uploader ? '<div class="template-card-uploader">by ' + escHtml(t.uploader) + '</div>' : '') +
         '</div>' +
-      '</div>' +
-      '<button class="btn-template-load">Load</button>';
+      '</div>';
 
-    card.querySelector('.btn-template-load').addEventListener('click', async (e) => {
-      e.stopPropagation();
+    card.addEventListener('click', async () => {
       const imgPath = await window.electronAPI.getTemplateImagePath({ id: t.id });
       if (imgPath) {
         state.inputPath = imgPath;
@@ -264,16 +268,18 @@ function escHtml(s) {
 
 // ── Account Area / Auth ──────────────────────────────────────────
 
-function updateAccountArea() {
+async function updateAccountArea() {
   if (state.ign && state.uuid) {
+    const avatar = await window.electronAPI.fetchAvatar({ id: state.uuid });
+    const src = avatar.success ? avatar.dataUrl : '';
     dom.accountArea.innerHTML =
       '<div class="account-pill" id="account-pill">' +
-        '<img class="account-head" src="https://mineskin.eu/helm/' + encodeURIComponent(state.ign) + '/32?t=' + Date.now() + '" alt="">' +
+        '<img class="account-head" src="' + src + '" alt="">' +
         '<span class="account-name">' + escHtml(state.ign) + '</span>' +
         '<span class="account-arrow">&#9662;</span>' +
       '</div>';
     document.getElementById('account-pill').addEventListener('click', toggleDropdown);
-    dom.ddHead.src = 'https://mineskin.eu/helm/' + encodeURIComponent(state.ign) + '/64?t=' + Date.now();
+    dom.ddHead.src = src;
     dom.ddName.textContent = state.ign;
     dom.ddUuid.textContent = state.uuid;
   } else {
@@ -380,7 +386,7 @@ async function fetchProfile() {
     await window.electronAPI.saveAccount({
       ign: profile.name, uuid: profile.id, refreshToken: state.refreshToken
     });
-    updateAccountArea();
+    await updateAccountArea();
     autoDetectOriginalSkin();
   } catch (e) {
     state.ign = null;
@@ -401,9 +407,23 @@ async function autoDetectOriginalSkin() {
       state.originalSkinPath = tmpPath;
       dom.originalName.textContent = state.ign + ' (current skin) -> #27';
       dom.originalZone.classList.add('has-file');
-      state.originalSkinHead = 'https://mineskin.eu/helm/' + encodeURIComponent(state.ign) + '/100.png?t=' + Date.now();
-      updateCell27();
-      updatePreviewCell27();
+      const img = new Image();
+      img.src = 'data:image/png;base64,' + result.data;
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = 8; c.height = 8;
+        const ctx = c.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 8, 8, 8, 8, 0, 0, 8, 8);
+        state.originalSkinHead = c.toDataURL();
+        updateCell27();
+        updatePreviewCell27();
+      };
+      img.onerror = () => {
+        state.originalSkinHead = 'https://mc-heads.net/avatar/' + state.uuid + '/64?t=' + Date.now();
+        updateCell27();
+        updatePreviewCell27();
+      };
     }
   } catch {}
 }
@@ -418,11 +438,16 @@ async function refreshSavedAccountsList() {
   }
   dom.savedAccountsSection.style.display = '';
   dom.savedAccountsList.innerHTML = '';
-  for (const acct of accounts) {
+  const avatars = await Promise.all(
+    accounts.map(a => window.electronAPI.fetchAvatar({ id: a.uuid || a.ign }))
+  );
+  for (let i = 0; i < accounts.length; i++) {
+    const acct = accounts[i];
     const row = document.createElement('div');
     row.className = 'saved-account-row';
+    const src = avatars[i].success ? avatars[i].dataUrl : '';
     row.innerHTML =
-      '<img class="saved-head" src="https://mineskin.eu/helm/' + encodeURIComponent(acct.ign) + '/24?t=' + Date.now() + '" alt="">' +
+      '<img class="saved-head" src="' + src + '" alt="">' +
       '<span class="saved-name">' + escHtml(acct.ign) + '</span>' +
       '<button class="btn-load-acct" data-ign="' + escHtml(acct.ign) + '">Load</button>' +
       '<button class="btn-remove-acct" data-ign="' + escHtml(acct.ign) + '">&times;</button>';
@@ -435,7 +460,7 @@ async function refreshSavedAccountsList() {
       await window.electronAPI.deleteAccount({ ign });
       if (state.ign === ign) {
         state.bearerToken = null; state.refreshToken = null; state.ign = null; state.uuid = null;
-        updateAccountArea();
+        await updateAccountArea();
       }
       refreshSavedAccountsList();
     });
@@ -463,7 +488,7 @@ async function loadSavedAccount(ign) {
         ign: acct.ign, uuid: acct.uuid, refreshToken: result.refreshToken
       });
       dom.signinModal.style.display = 'none';
-      updateAccountArea();
+      await updateAccountArea();
       autoDetectOriginalSkin();
     } else {
       dom.dcStatus.textContent = 'Refresh failed: ' + result.error;
@@ -569,7 +594,7 @@ async function uploadWithRetry(skin, maxRetries) {
   maxRetries = maxRetries || 3;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     const result = await window.electronAPI.uploadOneSkin({
-      bearerToken: state.bearerToken, skinPath: skin.path
+      bearerToken: state.bearerToken, skinPath: skin.path, variant: skin.variant || 'classic'
     });
     if (result.success) return result;
     if (result.statusCode === 401) {
@@ -620,6 +645,18 @@ function logEntry(cls, text) {
   dom.uploadLog.prepend(entry);
 }
 
+function askSkinModel() {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('model-modal');
+    const btnSlim = document.getElementById('btn-model-slim');
+    const btnWide = document.getElementById('btn-model-wide');
+    modal.style.display = 'flex';
+    const pick = (variant) => { modal.style.display = 'none'; resolve(variant); };
+    btnSlim.onclick = () => pick('slim');
+    btnWide.onclick = () => pick('classic');
+  });
+}
+
 async function runUpload(startNum) {
   if (state.uploadRunning) return;
   if (!state.bearerToken) { openSigninModal(); return; }
@@ -645,11 +682,12 @@ async function runUpload(startNum) {
     }
     updateUploadCell(skin.num, 'uploaded', skin.path);
     logEntry('ok', 'Skin ' + skin.num + ': OK');
-    await waitForNextSkin(skin.num);
+    await waitForNextSkin(skin.num, skin.path);
   }
   if (state.originalSkinPath) {
     highlightGridCell(27);
-    const result = await uploadWithRetry({ path: state.originalSkinPath, num: 27 });
+    const variant = await askSkinModel();
+    const result = await uploadWithRetry({ path: state.originalSkinPath, num: 27, variant });
     if (!result.success) {
       updateUploadCell(27, 'error');
       logEntry('err', 'Skin 27 (original): ' + result.error);
@@ -671,15 +709,153 @@ function highlightGridCell(num) {
   if (cell) cell.classList.add('active-cell');
 }
 
-function waitForNextSkin(num) {
+function compareFaces(faceBase64, tileDataUrl) {
+  const SIZE = 32;
   return new Promise((resolve) => {
-    dom.confirmArea.style.display = '';
-    dom.confirmNum.textContent = num;
-    if (state.ign) dom.confirmHead.src = 'https://mineskin.eu/helm/' + encodeURIComponent(state.ign) + '/128?t=' + Date.now();
-    dom.btnNextSkin.onclick = () => {
+    const nmImg = new Image();
+    nmImg.onload = () => {
+      const tileImg = new Image();
+      tileImg.onload = () => {
+        const nmCanvas = document.createElement('canvas');
+        nmCanvas.width = SIZE; nmCanvas.height = SIZE;
+        const nmCtx = nmCanvas.getContext('2d');
+        nmCtx.imageSmoothingEnabled = false;
+        nmCtx.drawImage(nmImg, 0, 0, SIZE, SIZE);
+        const nmData = nmCtx.getImageData(0, 0, SIZE, SIZE).data;
+
+        const tCanvas = document.createElement('canvas');
+        tCanvas.width = SIZE; tCanvas.height = SIZE;
+        const tCtx = tCanvas.getContext('2d');
+        tCtx.imageSmoothingEnabled = false;
+        tCtx.drawImage(tileImg, 0, 0, SIZE, SIZE);
+        const tData = tCtx.getImageData(0, 0, SIZE, SIZE).data;
+
+        let matching = 0, compared = 0;
+        for (let i = 0; i < nmData.length; i += 4) {
+          if (nmData[i + 3] > 10 || tData[i + 3] > 10) {
+            compared++;
+            const dr = Math.abs(nmData[i] - tData[i]);
+            const dg = Math.abs(nmData[i + 1] - tData[i + 1]);
+            const db = Math.abs(nmData[i + 2] - tData[i + 2]);
+            if (dr < 30 && dg < 30 && db < 30) matching++;
+          }
+        }
+        resolve(compared > 0 ? matching / compared : 0);
+      };
+      tileImg.onerror = () => resolve(0);
+      tileImg.src = tileDataUrl;
+    };
+    nmImg.onerror = () => resolve(0);
+    nmImg.src = 'data:image/png;base64,' + faceBase64;
+  });
+}
+
+async function waitForNextSkin(num, skinPath) {
+  dom.confirmArea.style.display = '';
+  dom.confirmNum.textContent = num;
+  dom.btnNextSkin.style.display = 'none';
+  dom.btnSkipWait.style.display = '';
+  dom.pollStatus.className = 'poll-status';
+  dom.pollText.textContent = 'Waiting for skin to propagate...';
+  if (state.ign) dom.confirmHead.src = 'https://mineskin.eu/helm/' + encodeURIComponent(state.ign) + '/128?t=' + Date.now();
+
+  return new Promise((resolve) => {
+    let resolved = false;
+    let attempts = 0;
+    let timer = null;
+    const maxAttempts = 12;
+    const interval = 10000;
+
+    function finish() {
+      if (resolved) return;
+      resolved = true;
+      if (timer) clearInterval(timer);
       dom.confirmArea.style.display = 'none';
       resolve();
+    }
+
+    dom.btnSkipWait.onclick = () => {
+      logEntry('ok', 'Skin ' + num + ': skipped verification');
+      finish();
     };
+
+    dom.btnNextSkin.onclick = () => finish();
+
+    setTimeout(async () => {
+      const tileDataUrl = state.tileData[num];
+      const nmRetryMax = 4;
+      const nmRetryInterval = 5000;
+
+      for (let nmAttempt = 1; nmAttempt <= nmRetryMax; nmAttempt++) {
+        if (resolved) return;
+        logEntry('ok', 'Skin ' + num + ': checking NameMC... (' + nmAttempt + '/' + nmRetryMax + ')');
+        dom.pollText.textContent = 'Loading NameMC profile... (' + nmAttempt + '/' + nmRetryMax + ')';
+
+        try {
+          const nmResult = await window.electronAPI.scrapeNameMCSkin({ ign: state.ign });
+          if (resolved) return;
+          if (nmResult.success && nmResult.faceData) {
+            if (tileDataUrl) {
+              const ratio = await compareFaces(nmResult.faceData, tileDataUrl);
+              logEntry('ok', 'Skin ' + num + ': face match: ' + Math.round(ratio * 100) + '%');
+              if (ratio > 0.7) {
+                dom.pollStatus.className = 'poll-status done';
+                dom.pollText.textContent = 'Skin verified on NameMC!';
+                logEntry('ok', 'Skin ' + num + ': verified on NameMC');
+                dom.btnNextSkin.style.display = '';
+                dom.btnSkipWait.style.display = 'none';
+                finish();
+                return;
+              }
+              logEntry('ok', 'Skin ' + num + ': face not matched yet, retrying...');
+            } else {
+              logEntry('ok', 'Skin ' + num + ': NameMC loaded but no tile data for comparison');
+              break;
+            }
+          } else {
+            logEntry('ok', 'Skin ' + num + ': NameMC scrape: ' + (nmResult.error || 'unknown'));
+          }
+        } catch (e) {
+          if (resolved) return;
+          logEntry('err', 'Skin ' + num + ': NameMC error: ' + e.message);
+        }
+        if (nmAttempt < nmRetryMax) await new Promise(r => setTimeout(r, nmRetryInterval));
+      }
+
+      if (resolved) return;
+      logEntry('ok', 'Skin ' + num + ': falling back to session server...');
+      dom.pollText.textContent = 'Checking session server...';
+
+      timer = setInterval(async () => {
+        attempts++;
+        dom.pollText.textContent = 'Checking session server... (' + attempts + '/' + maxAttempts + ')';
+
+        try {
+          const status = await window.electronAPI.checkSkinStatus({ uuid: state.uuid, skinPath });
+          logEntry('ok', 'Debug: ' + (status.debug || JSON.stringify(status)));
+          if (status.success && status.matches) {
+            dom.pollStatus.className = 'poll-status done';
+            dom.pollText.textContent = 'Skin verified — matches uploaded file!';
+            logEntry('ok', 'Skin ' + num + ': verified — matches uploaded file');
+            dom.btnNextSkin.style.display = '';
+            dom.btnSkipWait.style.display = 'none';
+            finish();
+            return;
+          }
+        } catch (e) {
+          logEntry('err', 'Debug error: ' + e.message);
+        }
+
+        if (attempts >= maxAttempts) {
+          dom.pollStatus.className = 'poll-status done';
+          dom.pollText.textContent = 'Timed out — click Next Skin to continue';
+          logEntry('err', 'Skin ' + num + ': verification timed out');
+          dom.btnNextSkin.style.display = '';
+          dom.btnSkipWait.style.display = 'none';
+          finish();
+        }
+      }, interval);
+    }, 12000);
   });
 }
 
@@ -740,7 +916,7 @@ function setupGrid() {
 function updateCell27() {
   const cell = document.getElementById('cell-27');
   if (!cell) return;
-  const src = state.originalSkinHead || state.lastTileDataUrl;
+  const src = state.originalSkinHead || state.lastTileDataUrl || (state.tileData && state.tileData[27]) || null;
   if (src) {
     cell.style.backgroundImage = 'url(' + src + ')';
     cell.style.backgroundSize = 'cover';
@@ -779,14 +955,14 @@ function renderPreview() {
   if (!state.inputPath) return;
   fetchPreviewTiles(state.inputPath).then(tiles => {
     state.tileData = tiles;
-    state.lastTileDataUrl = tiles[1] || null;
+    state.lastTileDataUrl = tiles[27] || null;
     const grid = [[27,26,25,24,23,22,21,20,19],[18,17,16,15,14,13,12,11,10],[9,8,7,6,5,4,3,2,1]];
     let html = '<div class="preview-grid">';
     for (const row of grid) {
       for (const num of row) {
         let src, label, cls;
         if (num === 27) {
-          src = state.originalSkinHead || state.lastTileDataUrl;
+          src = state.originalSkinHead || tiles[27];
           label = state.originalSkinHead ? 'FACE' : '27';
           cls = '';
         } else {
@@ -820,7 +996,6 @@ function fetchPreviewTiles(filePath) {
       for (let row = 0; row < 3; row++) {
         for (let col = 0; col < 9; col++) {
           const num = 27 - (row * 9 + col);
-          if (num === 27) { map[num] = ''; continue; }
           const c = document.createElement('canvas');
           c.width = 8; c.height = 8;
           const cCtx = c.getContext('2d');
@@ -904,4 +1079,5 @@ dom.btnRestart.addEventListener('click', async () => {
 // ── Init ──────────────────────────────────────────────────────────
 
 updateAccountArea();
+refreshSavedAccountsList();
 loadTemplates();

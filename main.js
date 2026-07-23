@@ -5,6 +5,7 @@ const os = require('os');
 const https = require('https');
 const http = require('http');
 const mc = require('minecraft-protocol');
+const sharp = require('sharp');
 const { generateAll } = require('./lib/imageProcessor');
 
 app.commandLine.appendSwitch('disable-gpu-compositing');
@@ -91,6 +92,7 @@ function createWindow() {
     height: 820,
     minWidth: 800,
     minHeight: 600,
+    icon: path.join(__dirname, 'lib', 'logo.png'),
     webPreferences: {
       preload: path.join(__dirname, 'renderer', 'preload.js'),
       contextIsolation: true,
@@ -153,6 +155,31 @@ function httpsGet(hostname, urlPath) {
   });
 }
 
+function httpsGetHtml(hostname, urlPath) {
+  return new Promise((resolve, reject) => {
+    const req = https.request({ hostname, path: urlPath, method: 'GET',
+      headers: {
+        'Accept': 'text/html',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    }, res => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        const loc = res.headers.location;
+        const u = new URL(loc, 'https://' + hostname);
+        return httpsGetHtml(u.hostname, u.pathname + u.search).then(resolve).catch(reject);
+      }
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) resolve(data);
+        else reject(new Error('HTTP ' + res.statusCode));
+      });
+    });
+    req.on('error', reject);
+    req.end();
+  });
+}
+
 function downloadFile(url) {
   return new Promise((resolve, reject) => {
     const mod = url.startsWith('https') ? https : http;
@@ -194,6 +221,15 @@ ipcMain.handle('download-head', async (event, { uuid }) => {
     return { success: true, data: buf.toString('base64') };
   } catch (e) {
     return { success: false, error: e.message };
+  }
+});
+
+ipcMain.handle('fetch-avatar', async (event, { id }) => {
+  try {
+    const buf = await downloadFile('https://mc-heads.net/avatar/' + encodeURIComponent(id) + '/64?t=' + Date.now());
+    return { success: true, dataUrl: 'data:image/png;base64,' + buf.toString('base64') };
+  } catch (e) {
+    return { success: false, dataUrl: '' };
   }
 });
 
@@ -442,6 +478,94 @@ ipcMain.handle('cancel-claim', async () => {
   return true;
 });
 
+// ── NameMC Skin Scraper (hidden BrowserWindow) ───────────────────
+
+const NAMEMC_BLOCK = /doubleclick\.net|googletagmanager|google-analytics|quantserve|quantcast|primis\.tech|anonymised|anonm\.io|snigelweb|kumo\.network-n|cloudflareinsights|btloader|pbstck|dns-finder|html-load|ad-delivery|pubmatic|amazon-adsystem|demdex|adform|sharethrough|yieldmo|inmobi|criteo|rubiconproject|adsrvr\.org|smartclip|zeotap|tealium|agkn\.com|cdn\.privacy|cdn1\.anonymised|scripts\.webcontentassessor|boot\.pbstck|cdn\.snigel|googleadservices|pagead2\/adservices\/|static\.cloudflareinsights|live\.primis|video\.primis|pixel\.quantserve|choices\.trustarc|choices-or\.trustarc|ab\.dns-finder|user-segments\.anonymised|api\.anonymised/i;
+
+ipcMain.handle('scrape-namemc-skin', async (event, { ign }) => {
+  let resolved = false;
+  const win = new BrowserWindow({
+    show: false,
+    offscreen: true,
+    width: 800,
+    height: 600,
+    webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, partition: 'scrape-' + Date.now() }
+  });
+
+  win.webContents.session.webRequest.onBeforeRequest({ urls: ['*://*/*'] }, (details, callback) => {
+    if (NAMEMC_BLOCK.test(details.url)) return callback({ cancel: true });
+    callback({});
+  });
+
+  const cleanup = () => { try { if (!win.isDestroyed()) win.webContents.session.webRequest.onBeforeRequest(null); } catch {} try { if (!win.isDestroyed()) win.destroy(); } catch {} };
+
+  const result = await new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      if (!resolved) { resolved = true; cleanup(); resolve({ success: false, error: 'NameMC timeout (30s)' }); }
+    }, 30000);
+
+    win.webContents.on('did-fail-load', (e, code, desc) => {
+      if (!resolved) { resolved = true; clearTimeout(timer); cleanup(); resolve({ success: false, error: 'Load failed: ' + desc }); }
+    });
+
+    win.webContents.on('did-finish-load', async () => {
+      if (resolved) return;
+
+      const waitForProfile = async (maxWait, interval) => {
+        const start = Date.now();
+        while (Date.now() - start < maxWait) {
+          if (resolved) return false;
+          await new Promise(r => setTimeout(r, interval));
+          try {
+            const url = win.webContents.getURL();
+            if (url.includes('challenges.cloudflare.com') || url.includes('cdn-cgi')) continue;
+            const ready = await win.webContents.executeJavaScript(
+              '!!(document.querySelector("canvas.skin-2d") || document.title.includes("Profile"))'
+            );
+            if (ready) return true;
+          } catch {}
+        }
+        return false;
+      };
+
+      const ready = await waitForProfile(20000, 1000);
+      if (resolved) return;
+      if (!ready) { resolved = true; clearTimeout(timer); cleanup(); resolve({ success: false, error: 'Profile did not load' }); return; }
+
+      await new Promise(r => setTimeout(r, 1000));
+
+      try {
+        const faceData = await win.webContents.executeJavaScript(`
+          (function() {
+            var sel = document.querySelector('canvas.skin-2d.skin-button-selected');
+            if (sel) return sel.toDataURL('image/png');
+            var first = document.querySelector('canvas.skin-2d');
+            if (first) return first.toDataURL('image/png');
+            return null;
+          })()
+        `);
+
+        if (!faceData) {
+          resolved = true; clearTimeout(timer); cleanup();
+          resolve({ success: false, error: 'No face canvas found' });
+          return;
+        }
+
+        const base64Data = faceData.replace(/^data:image\/png;base64,/, '');
+        clearTimeout(timer);
+        resolved = true;
+        cleanup();
+        resolve({ success: true, faceData: base64Data });
+      } catch (e) {
+        if (!resolved) { resolved = true; clearTimeout(timer); cleanup(); resolve({ success: false, error: 'Extraction failed: ' + e.message }); }
+      }
+    });
+
+    win.loadURL('https://namemc.com/profile/' + encodeURIComponent(ign));
+  });
+  return result;
+});
+
 // ── Xbox / Minecraft Auth Chain ──────────────────────────────────
 
 async function exchangeForMinecraft(msToken) {
@@ -487,21 +611,64 @@ async function exchangeForMinecraft(msToken) {
 
 // ── Skin Upload ──────────────────────────────────────────────────
 
-ipcMain.handle('upload-one-skin', async (event, { bearerToken, skinPath }) => {
+ipcMain.handle('upload-one-skin', async (event, { bearerToken, skinPath, variant }) => {
   try {
-    await uploadOneSkin(bearerToken, skinPath);
+    await uploadOneSkin(bearerToken, skinPath, variant);
     return { success: true };
-  } catch (err) {
-    return { success: false, error: err.message, statusCode: err.statusCode };
+  } catch (e) {
+    return { success: false, error: e.message, statusCode: e.statusCode };
   }
 });
 
-function uploadOneSkin(bearer, skinPath) {
+ipcMain.handle('open-namemc-cache', async (event, { ign }) => {
+  shell.openExternal('https://namemc.com/profile/' + encodeURIComponent(ign));
+  return { success: true };
+});
+
+ipcMain.handle('check-skin-status', async (event, { uuid, skinPath }) => {
+  try {
+    const profileData = await httpsGet('sessionserver.mojang.com', '/session/minecraft/profile/' + uuid);
+    const profile = JSON.parse(profileData);
+    const textureProp = profile.properties.find(p => p.name === 'textures');
+    if (!textureProp) return { success: true, skinUrl: null, matches: false, debug: 'no texture property' };
+    const decoded = JSON.parse(Buffer.from(textureProp.value, 'base64').toString('utf8'));
+    const skinUrl = decoded.textures.SKIN ? decoded.textures.SKIN.url : null;
+    if (!skinUrl) return { success: true, skinUrl: null, matches: false, debug: 'no SKIN url' };
+    if (!skinPath) return { success: true, skinUrl, matches: false, debug: 'no local path' };
+    let remoteBuf;
+    try {
+      remoteBuf = await downloadFile(skinUrl);
+    } catch (dlErr) {
+      return { success: true, skinUrl, matches: false, debug: 'download failed: ' + dlErr.message };
+    }
+    const localBuf = fs.readFileSync(skinPath);
+    const remoteRaw = await sharp(remoteBuf).ensureAlpha().resize(64, 64, { kernel: sharp.kernel.nearest }).raw().toBuffer();
+    const localRaw = await sharp(localBuf).ensureAlpha().resize(64, 64, { kernel: sharp.kernel.nearest }).raw().toBuffer();
+    const W = 64;
+    const tileX = 8, tileY = 8, tileW = 8, tileH = 8;
+    let tileMatch = true;
+    for (let y = tileY; y < tileY + tileH && tileMatch; y++) {
+      for (let x = tileX; x < tileX + tileW; x++) {
+        const off = (y * W + x) * 4;
+        if (remoteRaw[off] !== localRaw[off] || remoteRaw[off+1] !== localRaw[off+1] ||
+            remoteRaw[off+2] !== localRaw[off+2] || remoteRaw[off+3] !== localRaw[off+3]) {
+          tileMatch = false;
+          break;
+        }
+      }
+    }
+    return { success: true, skinUrl, matches: tileMatch, debug: 'tile_8x8_match=' + tileMatch };
+  } catch (e) {
+    return { success: false, error: e.message, debug: e.message };
+  }
+});
+
+function uploadOneSkin(bearer, skinPath, variant) {
   return new Promise((resolve, reject) => {
     const boundary = '----WebKitFormBoundary' + Math.random().toString(36).slice(2);
     const fileBuffer = fs.readFileSync(skinPath);
     const bodyParts = [];
-    bodyParts.push('--' + boundary + '\r\nContent-Disposition: form-data; name="variant"\r\n\r\nclassic');
+    bodyParts.push('--' + boundary + '\r\nContent-Disposition: form-data; name="variant"\r\n\r\n' + (variant || 'classic'));
     bodyParts.push('--' + boundary + '\r\nContent-Disposition: form-data; name="file"; filename="skin.png"\r\nContent-Type: image/png\r\n\r\n');
     const bodyText = bodyParts.join('\r\n');
     const bodyEnd = '\r\n--' + boundary + '--\r\n';
