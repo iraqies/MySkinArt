@@ -1447,6 +1447,13 @@ button:disabled:hover {
   color: white;
 }
 
+.done-actions .btn-restart {
+  padding: 16px 48px;
+  font-size: 16px;
+  border: none;
+  letter-spacing: 0.4px;
+}
+
 /* ── Templates Filter Bar ─────────────────────────────── */
 
 .templates-filter-bar {
