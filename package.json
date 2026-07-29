@@ -1,0 +1,48 @@
+{
+  "name": "myskinart",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "NameMC Skinart App - Automate splitting and uploading skin art",
+  "dependencies": {
+    "got-scraping": "^4.2.1",
+    "minecraft-protocol": "^1.66.2",
+    "sharp": "^0.35.3"
+  },
+  "build": {
+    "appId": "com.myskinart.app",
+    "productName": "MySkinArt",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "dl_electron.js",
+      "firebase-config.json",
+      "lib/**/*",
+      "renderer/**/*",
+      "templates/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "lib/logo.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^26.15.3"
+  }
+}
