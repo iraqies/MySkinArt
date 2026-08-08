@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MySkinArt Templates</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --border: #334155;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --teal: #2dd4bf;
+    --teal-soft: #134e4a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px;
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--teal);
+  }
+  header p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .filters {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  #search {
+    flex: 1;
+    min-width: 220px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 14px;
+    outline: none;
+  }
+  #search:focus { border-color: var(--teal); }
+  #tag-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+  }
+  #count {
+    align-self: center;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-left: auto;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+    padding: 24px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .card:hover { transform: translateY(-3px); border-color: var(--teal); }
+  .preview {
+    width: 100%;
+    aspect-ratio: 3 / 1;
+    background: var(--teal-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+  .preview .ph { font-size: 12px; color: var(--text-dim); }
+  .info { padding: 12px 14px; }
+  .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .uploader {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tags { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 11px;
+    color: var(--teal);
+    background: rgba(45, 212, 191, 0.12);
+    border: 1px solid var(--teal-soft);
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .download {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px 0;
+    background: transparent;
+    border: 1px solid var(--teal-soft);
+    border-radius: 8px;
+    color: var(--teal);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .download:hover { background: rgba(45, 212, 191, 0.12); }
+  #lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+  }
+  #lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    border-radius: 8px;
+  }
+  .status { text-align: center; color: var(--text-dim); padding: 40px 20px; font-size: 14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>MySkinArt Templates</h1>
+  <p>All skin-art templates from the <a href="https://github.com/iraqies/MySkinArt/tree/master/templates" style="color:var(--teal)">MySkinArt repo</a>.</p>
+  <div class="filters">
+    <input type="text" id="search" placeholder="Search by name or uploader...">
+    <select id="tag-select"><option value="">All Tags</option></select>
+    <span id="count"></span>
+  </div>
+</header>
+<div id="grid" class="grid"></div>
+<div id="lightbox"><img id="lightbox-img" alt=""></div>
+
+<script>
+const CDN = 'https://cdn.jsdelivr.net/gh/iraqies/MySkinArt@master/templates';
+const RAW = 'https://raw.githubusercontent.com/iraqies/MySkinArt/master/templates';
+let templates = [];
+let activeTag = '';
+
+const grid = document.getElementById('grid');
+const search = document.getElementById('search');
+const tagSelect = document.getElementById('tag-select');
+const count = document.getElementById('count');
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+
+async function load() {
+  const status = document.createElement('div');
+  status.className = 'status';
+  status.textContent = 'Loading templates...';
+  grid.appendChild(status);
+
+  let json = null;
+  for (const base of [CDN, RAW]) {
+    try {
+      const res = await fetch(base + '/templates.json');
+      if (res.ok) { json = await res.json(); break; }
+    } catch (e) { /* try next */ }
+  }
+  if (!json || !json.templates) {
+    status.textContent = 'Failed to load templates. Check your connection or the repo URL.';
+    return;
+  }
+  status.remove();
+  templates = json.templates;
+  buildTags();
+  render();
+}
+
+function buildTags() {
+  const set = new Set();
+  for (const t of templates) for (const tag of (t.tags || [])) set.add(tag);
+  [...set].sort().forEach(tag => {
+    const opt = document.createElement('option');
+    opt.value = tag;
+    opt.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
+    tagSelect.appendChild(opt);
+  });
+}
+
+function imgUrl(filename) {
+  const f = (filename || '').split('/').pop();
+  return CDN + '/images/' + encodeURIComponent(f);
+}
+
+function render() {
+  const query = search.value.trim().toLowerCase();
+  let list = templates;
+  if (activeTag) list = list.filter(t => (t.tags || []).includes(activeTag));
+  if (query) list = list.filter(t => {
+    return (t.name || '').toLowerCase().includes(query)
+        || (t.uploader || '').toLowerCase().includes(query)
+        || (t.tags || []).join(' ').toLowerCase().includes(query);
+  });
+  count.textContent = list.length + ' template' + (list.length === 1 ? '' : 's');
+  grid.innerHTML = '';
+  for (const t of list) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML =
+      '<div class="preview"><img loading="lazy" alt="' + esc(t.name) + '" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'ph\',textContent:\'preview unavailable\'}))"></div>' +
+      '<div class="info">' +
+        '<div class="name">' + esc(t.name) + '</div>' +
+        (t.uploader ? '<div class="uploader">by ' + esc(t.uploader) + '</div>' : '') +
+        ((t.tags || []).length ? '<div class="tags">' + t.tags.map(tg => '<span class="tag">' + esc(tg) + '</span>').join('') + '</div>' : '') +
+        '<button class="download">Download</button>' +
+      '</div>';
+    card.querySelector('img').src = imgUrl(t.filename);
+    card.addEventListener('click', () => {
+      lightboxImg.src = imgUrl(t.filename);
+      lightbox.style.display = 'flex';
+    });
+    card.querySelector('.download').addEventListener('click', (e) => {
+      e.stopPropagation();
+      downloadTemplate(t, e);
+    });
+    grid.appendChild(card);
+  }
+}
+
+async function downloadTemplate(t, e) {
+  const btn = e && e.target;
+  const url = imgUrl(t.filename);
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (t.filename || 'template.png').split('/').pop();
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  } catch (err) {
+    if (btn) {
+      const old = btn.textContent;
+      btn.textContent = 'Failed';
+      setTimeout(() => { btn.textContent = old; }, 1500);
+    }
+  }
+}
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+search.addEventListener('input', render);
+tagSelect.addEventListener('change', () => { activeTag = tagSelect.value; render(); });
+lightbox.addEventListener('click', () => { lightbox.style.display = 'none'; });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') lightbox.style.display = 'none'; });
+
+load();
+</script>
+</body>
+</html>
